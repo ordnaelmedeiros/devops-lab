@@ -1,0 +1,25 @@
+---
+- name: general
+  hosts: all
+  become: true
+  roles:
+    - base
+    - consul
+
+- name: worker
+  hosts: worker
+  become: true
+  roles:
+    - docker
+
+- name: nomad
+  hosts: nomad-server, worker
+  become: true
+  roles:
+    - nomad
+
+- name: deploy jobs
+  hosts: nomad-server[0]
+  become: true
+  roles:
+    - nomad-jobs

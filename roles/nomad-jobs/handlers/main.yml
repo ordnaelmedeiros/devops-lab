@@ -1,0 +1,6 @@
+---
+- name: deploy jobs
+  with_fileglob:
+    - files/*
+  shell: nomad run /root/jobs/{{ item | regex_search('([^/]+$)') }}
+    

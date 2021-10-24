@@ -1,0 +1,8 @@
+{
+    "default-address-pools": [
+      {
+        "base": "{{ docker_gateway_mask }}/16",
+        "size":24
+      }
+    ]
+  }

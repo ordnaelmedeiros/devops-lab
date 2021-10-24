@@ -1,0 +1,30 @@
+[all:vars]
+ansible_python_interpreter=/usr/bin/python
+ansible_user=vagrant
+ansible_ssh_pass=vagrant
+consul_hcl = client
+nomad_hcl = client
+
+[consul-server:vars]
+consul_hcl = server
+
+[nomad-server:vars]
+nomad_hcl = server
+
+
+[consul-server]
+192.168.100.151
+#192.168.100.152
+#192.168.100.153
+
+[nomad-server]
+192.168.100.161
+#192.168.100.162
+#192.168.100.162
+
+[worker]
+192.168.100.171
+192.168.100.172
+#192.168.100.173
+#192.168.100.174
+#192.168.100.175

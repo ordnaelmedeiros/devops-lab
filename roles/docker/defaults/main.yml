@@ -1,0 +1,3 @@
+---
+docker_version: "20.10.8"
+docker_gateway_mask: "10.221.0.0"

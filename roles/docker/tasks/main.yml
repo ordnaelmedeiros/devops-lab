@@ -1,0 +1,31 @@
+---
+- name: getting package facts
+  package_facts:
+    manager: auto
+
+- name: add docker repo
+  become: true
+  shell: yum remove -y docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine && yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  when: "'docker-ce' not in ansible_facts.packages or docker_version not in ansible_facts.packages['docker-ce']|map(attribute='version')|list"
+
+- name: install docker
+  become: true
+  notify: Restart docker
+  yum:
+    name:
+      - docker-ce-{{docker_version}}
+      - docker-ce-cli-{{docker_version}}
+      - containerd.io
+
+- name: Create directory /etc/docker
+  file: 
+    path: /etc/docker
+    state: directory
+    mode: 0777
+    
+- name: docker daemon.json
+  notify: Restart docker
+  become: true
+  template:
+    src: files/daemon.json
+    dest: /etc/docker/daemon.json

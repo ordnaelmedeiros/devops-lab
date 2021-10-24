@@ -1,0 +1,30 @@
+datacenter = "app"
+data_dir = "/opt/consul"
+
+client_addr = "0.0.0.0"
+ui_config {
+  enabled = false
+}
+
+ports {
+  grpc = 8502
+}
+
+connect {
+  enabled = true
+}
+
+recursors = ["8.8.8.8", "8.8.4.4"]
+
+server = false
+bind_addr = "0.0.0.0" # Listen on all IPv4
+advertise_addr = "{{ inventory_hostname }}"
+retry_join = [
+{% for item in groups['consul-server'] %}
+    "{{ hostvars[item]['inventory_hostname'] }}",
+{% endfor %}
+]
+
+telemetry {
+  prometheus_retention_time = "30s"
+}

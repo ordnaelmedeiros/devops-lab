@@ -1,0 +1,21 @@
+---
+- name: add hascicorp repo
+  become: true
+  shell: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+  when: "'nomad' not in ansible_facts.packages"
+
+- name: install nomad
+  become: true
+  when: "'nomad' not in ansible_facts.packages or nomad_version not in ansible_facts.packages['nomad']|map(attribute='version')|list"
+  yum:
+    update_cache: yes
+    state: present
+    name:
+      - nomad-{{nomad_version}}
+
+- name: nomad hcl
+  notify: Restart nomad
+  become: true
+  template:
+    src: templates/{{nomad_hcl}}.hcl.j2
+    dest: /etc/nomad.d/nomad.hcl
