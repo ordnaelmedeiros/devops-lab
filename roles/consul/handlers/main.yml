@@ -5,3 +5,10 @@
     state: restarted
     daemon_reload: yes
     enabled: yes
+
+- name: Restart dnsmasq
+  systemd:
+    name: dnsmasq
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

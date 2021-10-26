@@ -10,10 +10,10 @@ job "http-echo" {
     service {
       name = "http-echo"
       port = "http"
-      #tags = [
-      #  "traefik.enable=true",
-      #  "traefik.http.routers.http-echo.rule=Path(`/http-echo`) || Host(`http-echo.service.consul`)",
-      #]
+      tags = [
+        "traefik.enable=true",
+        # "traefik.http.routers.http-echo.rule=Path(`/http-echo`) || Host(`http-echo.service.consul`)",
+      ]
       check {
         name     = "alive"
         type     = "tcp"

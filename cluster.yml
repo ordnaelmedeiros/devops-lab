@@ -7,7 +7,7 @@
     - consul
 
 - name: worker
-  hosts: worker
+  hosts: worker, proxy
   become: true
   roles:
     - docker
@@ -17,6 +17,12 @@
   become: true
   roles:
     - nomad
+
+- name: install traefik
+  hosts: proxy
+  become: true
+  roles:
+    - traefik
 
 - name: deploy jobs
   hosts: nomad-server[0]

@@ -9,6 +9,9 @@ Vagrant.configure("2") do |config|
             m.vm.hostname = "consul-#{i}"
             m.vm.network "public_network", ip: "192.168.100.15#{i}"
             m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+            if i==1 then
+                m.vm.network "forwarded_port", guest: 8500, host: 8500
+            end
         end
     end
     (1..1).each do |i|
@@ -17,6 +20,9 @@ Vagrant.configure("2") do |config|
             m.vm.hostname = "nomad-#{i}"
             m.vm.network "public_network", ip: "192.168.100.16#{i}"
             m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+            if i==1 then
+                m.vm.network "forwarded_port", guest: 4646, host: 4646
+            end
         end
     end
     (1..2).each do |i|
@@ -30,6 +36,14 @@ Vagrant.configure("2") do |config|
             m.vm.network "public_network", ip: "192.168.100.17#{i}"
             m.vm.provision "shell", path: "scripts/enable_ssh.sh"
         end
+    end
+    config.vm.define "proxy" do |m|
+        m.vm.box = "centos/7"
+        m.vm.hostname = "proxy"
+        m.vm.network "public_network", ip: "192.168.100.181"
+        m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+        m.vm.network "forwarded_port", guest: 80, host: 80
+        m.vm.network "forwarded_port", guest: 8081, host: 8081
     end
     config.vm.define "ansible" do |m|
         m.vm.box = "ubuntu/focal64"

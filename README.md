@@ -17,8 +17,7 @@ vagrant up
 ```
 
 ## Verify
-- Consul: http://192.168.100.151:8500
-- Nomad: http://192.168.100.161:4646
-- Fist app: http://192.168.100.171:8080
-
-`change ip like hosts file`
+- Consul: http://localhost:8500
+- Nomad: http://localhost:4646
+- Traefik: http://localhost:8081
+- First app: http://localhost/http-echo

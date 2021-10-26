@@ -1,0 +1,19 @@
+---
+- name: create paths
+  file: 
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /opt/traefik
+
+- name: copy traefik.toml
+  notify: start traefik
+  template:
+    src: templates/traefik.toml
+    dest: /opt/traefik/traefik.toml
+
+- name: copy start.sh
+  notify: start traefik
+  copy:
+    src: files/start.sh
+    dest: /opt/traefik/start.sh
