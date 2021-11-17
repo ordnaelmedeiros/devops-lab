@@ -1,14 +1,11 @@
 job "traefik" {
-
   region = "grim"
   datacenters = ["app"]
   type = "system"
-
-  group "traefik" {
-
+  group "group" {
     count = 1
-
     network {
+      mode = "host"
       port "http" {
         static = 80
       }
@@ -16,7 +13,6 @@ job "traefik" {
         static = 8081
       }
     }
-
     service {
       name = "traefik"
       port = "api"
@@ -28,7 +24,7 @@ job "traefik" {
       check {
         name     = "alive"
         type     = "tcp"
-        port     = "http"
+        port     = "api"
         interval = "1s"
         timeout  = "2s"
         check_restart {
@@ -37,11 +33,10 @@ job "traefik" {
         }
       }
     }
-
     task "traefik" {
       driver = "docker"
       config {
-        image        = "traefik:v2.5.1"
+        image = "traefik:v2.5.1"
         network_mode = "host"
         volumes = [
           "local/traefik.toml:/etc/traefik/traefik.toml",
@@ -49,13 +44,12 @@ job "traefik" {
       }
       resources {
         cpu    = 100
-        memory = 256
+        memory = 64
       }
 
       template {
         destination = "local/traefik.toml"
         data = <<EOF
-
 [entryPoints]
   [entryPoints.traefik]
     address = ":8081"

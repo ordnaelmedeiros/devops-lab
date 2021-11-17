@@ -1,16 +1,18 @@
-job "http-echo" {
+job "whoami" {
   datacenters = ["app"]
   group "group" {
     count = 2
     network {
-      port "http" {}
+      port "http" {
+        to = 80
+      }
     }
     service {
-      name = "http-echo"
+      name = "whoami"
       port = "http"
       tags = [
         "traefik.enable=true",
-        # "traefik.http.routers.http-echo.rule=Path(`/http-echo`) || Host(`http-echo.service.consul`)",
+        # "traefik.http.routers.whoami.rule=Path(`/whoami`) || Host(`whoami.service.consul`)",
       ]
       check {
         name     = "alive"
@@ -20,15 +22,11 @@ job "http-echo" {
         timeout  = "1s"
       }
     }
-    task "http-echo" {
+    task "whoami" {
       driver = "docker"
       config {
-        image = "hashicorp/http-echo:latest"
+        image = "traefik/whoami:latest"
         ports = ["http"]
-        args = [
-          "-listen", ":${NOMAD_PORT_http}",
-          "-text", "v1 - Task ${NOMAD_TASK_NAME} - IP ${NOMAD_IP_http} : ${NOMAD_PORT_http}.",  
-        ]  
       }
       resources {
         cpu = 100

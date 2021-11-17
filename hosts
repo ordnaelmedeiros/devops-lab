@@ -1,7 +1,7 @@
 [all:vars]
 ansible_python_interpreter=/usr/bin/python
-ansible_user=vagrant
-ansible_ssh_pass=vagrant
+#ansible_user=vagrant
+#ansible_ssh_pass=vagrant
 consul_hcl = client
 nomad_hcl = client
 

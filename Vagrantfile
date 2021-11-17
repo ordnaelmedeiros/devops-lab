@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
             m.vm.box = "centos/7"
             m.vm.hostname = "consul-#{i}"
             m.vm.network "public_network", ip: "192.168.100.15#{i}"
-            m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+            m.vm.provision "shell", path: "keys/import.sh"
             if i==1 then
                 m.vm.network "forwarded_port", guest: 8500, host: 8500
             end
@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
             m.vm.box = "centos/7"
             m.vm.hostname = "nomad-#{i}"
             m.vm.network "public_network", ip: "192.168.100.16#{i}"
-            m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+            m.vm.provision "shell", path: "keys/import.sh"
             if i==1 then
                 m.vm.network "forwarded_port", guest: 4646, host: 4646
             end
@@ -34,14 +34,14 @@ Vagrant.configure("2") do |config|
             m.vm.box = "centos/7"
             m.vm.hostname = "worker-#{i}"
             m.vm.network "public_network", ip: "192.168.100.17#{i}"
-            m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+            m.vm.provision "shell", path: "keys/import.sh"
         end
     end
     config.vm.define "proxy" do |m|
         m.vm.box = "centos/7"
         m.vm.hostname = "proxy"
         m.vm.network "public_network", ip: "192.168.100.181"
-        m.vm.provision "shell", path: "scripts/enable_ssh.sh"
+        m.vm.provision "shell", path: "keys/import.sh"
         m.vm.network "forwarded_port", guest: 80, host: 80
         m.vm.network "forwarded_port", guest: 8081, host: 8081
     end
@@ -50,7 +50,11 @@ Vagrant.configure("2") do |config|
         m.vm.hostname = "ansible"
         m.vm.provision "shell", inline: <<-EOF
             sudo apt update
-            sudo apt install -y ansible sshpass
+            cat /vagrant/keys/key | tr -d '\r' > /home/vagrant/.ssh/id_rsa
+            cat /vagrant/keys/key.pub | tr -d '\r' > /home/vagrant/.ssh/id_rsa.pub
+            sudo chmod 600 ~/.ssh/id_rsa
+            sudo chmod 600 ~/.ssh/id_rsa.pub
+
             sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
             cd /vagrant
             ansible-playbook -i hosts cluster.yml
