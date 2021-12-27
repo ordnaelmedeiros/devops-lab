@@ -50,10 +50,17 @@ Vagrant.configure("2") do |config|
         m.vm.hostname = "ansible"
         m.vm.provision "shell", inline: <<-EOF
             sudo apt update
+            sudo apt install -y ansible sshpass
+            
+            cat /vagrant/keys/key | tr -d '\r' > /root/.ssh/id_rsa
+            cat /vagrant/keys/key.pub | tr -d '\r' > /root/.ssh/id_rsa.pub
+            sudo chmod 600 /root/.ssh/id_rsa
+            sudo chmod 600 /root/.ssh/id_rsa.pub
+
             cat /vagrant/keys/key | tr -d '\r' > /home/vagrant/.ssh/id_rsa
             cat /vagrant/keys/key.pub | tr -d '\r' > /home/vagrant/.ssh/id_rsa.pub
-            sudo chmod 600 ~/.ssh/id_rsa
-            sudo chmod 600 ~/.ssh/id_rsa.pub
+            sudo chmod 600 /home/vagrant/.ssh/id_rsa
+            sudo chmod 600 /home/vagrant/.ssh/id_rsa.pub
 
             sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
             cd /vagrant

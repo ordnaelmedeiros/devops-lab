@@ -6,8 +6,8 @@
     - base
     - consul
 
-- name: worker
-  hosts: worker, proxy
+- name: docker
+  hosts: worker, proxy, devops
   become: true
   roles:
     - docker

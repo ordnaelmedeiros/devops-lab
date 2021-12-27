@@ -11,7 +11,6 @@ consul_hcl = server
 [nomad-server:vars]
 nomad_hcl = server
 
-
 [consul-server]
 192.168.100.151
 #192.168.100.152
@@ -31,3 +30,4 @@ nomad_hcl = server
 
 [proxy]
 192.168.100.181
+
