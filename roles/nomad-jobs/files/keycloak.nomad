@@ -1,52 +1,62 @@
-job "whoami" {
+job "keycloak" {
   datacenters = ["app"]
   group "group" {
     count = 1
+
     network {
       mode = "bridge"
       port "http" {
-        to = 80
+        to = 8080
       }
     }
     service {
-      name = "whoami"
+      name = "keycloak"
       port = "http"
       tags = [
         "traefik.enable=true",
-        # "traefik.http.routers.whoami.rule=Path(`/whoami`) || Host(`whoami.service.consul`)",
       ]
       check {
         name     = "alive"
         type     = "http"
+        path     = "/auth/realms/master"
         port     = "http"
-        path     = "/"
         interval = "1s"
         timeout  = "1s"
       }
+
       connect {
-        #sidecar_service {}
-        gateway {
-          ingress {
-            listener {
-              port     = 8080
-              protocol = "tcp"
-              service {
-                name = "uuid-api"
-              }
+        sidecar_service {
+          tags = [
+            "traefik.enable=false",
+          ]
+          proxy {
+            upstreams {
+              destination_name = "keycloak-pg-pool"
+              local_bind_port  = 5433
             }
           }
         }
       }
     }
-    task "whoami" {
+    task "task" {
       driver = "docker"
       config {
-        image = "traefik/whoami:latest"
+        image = "quay.io/keycloak/keycloak:16.1.0"
         ports = ["http"]
       }
+      env {
+        KEYCLOAK_USER = "admin" 
+        KEYCLOAK_PASSWORD = "admin"
+        DB_VENDOR = "postgres"
+        DB_ADDR = "127.0.0.1"
+        DB_PORT = "5433"
+        DB_DATABASE = "keycloak"
+        DB_USER = "postgres"
+        DB_PASSWORD = "admin"
+      }
       resources {
-        cpu = 10
-        memory = 32
+        cpu = 100
+        memory = 512
       }
     }  
   }

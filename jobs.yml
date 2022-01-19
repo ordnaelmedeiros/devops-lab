@@ -1,0 +1,6 @@
+---
+- name: deploy jobs
+  hosts: nomad-server[0]
+  become: true
+  roles:
+    - nomad-jobs

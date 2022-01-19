@@ -31,3 +31,19 @@ nomad_hcl = server
 [proxy]
 192.168.100.181
 
+[db-master]
+192.168.100.191
+[db-master:vars]
+nomad_hcl = db-master
+
+[db-slave]
+192.168.100.192
+[db-slave:vars]
+nomad_hcl = db-slave
+
+[db:vars]
+# nomad_hcl = db
+[db:children]
+db-master
+db-slave
+

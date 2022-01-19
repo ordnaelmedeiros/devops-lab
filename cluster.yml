@@ -7,16 +7,22 @@
     - consul
 
 - name: docker
-  hosts: worker, proxy, devops
+  hosts: worker, proxy, devops, db
   become: true
   roles:
     - docker
 
 - name: nomad
-  hosts: nomad-server, worker
+  hosts: nomad-server, worker, db
   become: true
   roles:
     - nomad
+
+- name: cni-plugins
+  hosts: worker, db
+  become: true
+  roles:
+    - cni-plugins
 
 - name: install traefik
   hosts: proxy

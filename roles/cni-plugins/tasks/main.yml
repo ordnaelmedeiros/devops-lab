@@ -1,0 +1,34 @@
+---
+- name: add cni plugins
+  become: true
+  shell: |
+    curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz
+    sudo mkdir -p /opt/cni/bin
+    sudo tar -C /opt/cni/bin -xzf cni-plugins.tgz
+    echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables
+    echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables
+    echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+
+- name: update bridge-nf-call-arptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-arptables
+    value: "1"
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.conf
+
+- name: update bridge-nf-call-ip6tables
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.conf
+
+- name: update bridge-nf-call-iptable
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.conf

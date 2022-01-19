@@ -1,17 +1,17 @@
 datacenter = "app"
 data_dir = "/opt/consul"
-
 client_addr = "0.0.0.0"
+
 ui_config {
   enabled = false
 }
 
-ports {
-  grpc = 8502
-}
-
 connect {
   enabled = true
+}
+
+ports {
+  grpc = 8502
 }
 
 recursors = ["8.8.8.8", "8.8.4.4"]
@@ -30,5 +30,5 @@ telemetry {
 }
 
 encrypt = "EUE+QhVArrb4JP08KQIO8OFsNvmEiFCJApuXl8c/7ZQ="
-encrypt_verify_incoming = true
 encrypt_verify_outgoing = true
+encrypt_verify_incoming = true

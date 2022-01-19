@@ -1,3 +1,6 @@
+#   config.vm.box = "rockylinux/8"
+#   config.vm.box_version = "4.0.0"
+
 Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox" do |v|
         v.memory = 512
@@ -45,6 +48,18 @@ Vagrant.configure("2") do |config|
         m.vm.network "forwarded_port", guest: 80, host: 80
         m.vm.network "forwarded_port", guest: 8081, host: 8081
     end
+    (1..2).each do |i|
+        config.vm.define "db-#{i}" do |m|
+            m.vm.provider "virtualbox" do |vb|
+                vb.memory = 1024
+                vb.cpus = 1
+            end
+            m.vm.box = "centos/7"
+            m.vm.hostname = "db-#{i}"
+            m.vm.network "public_network", ip: "192.168.100.19#{i}"
+            m.vm.provision "shell", path: "keys/import.sh"
+        end
+    end
     config.vm.define "ansible" do |m|
         m.vm.box = "ubuntu/focal64"
         m.vm.hostname = "ansible"
@@ -52,17 +67,18 @@ Vagrant.configure("2") do |config|
             sudo apt update
             sudo apt install -y ansible sshpass
             
-            cat /vagrant/keys/key | tr -d '\r' > /root/.ssh/id_rsa
-            cat /vagrant/keys/key.pub | tr -d '\r' > /root/.ssh/id_rsa.pub
-            sudo chmod 600 /root/.ssh/id_rsa
-            sudo chmod 600 /root/.ssh/id_rsa.pub
-
             cat /vagrant/keys/key | tr -d '\r' > /home/vagrant/.ssh/id_rsa
             cat /vagrant/keys/key.pub | tr -d '\r' > /home/vagrant/.ssh/id_rsa.pub
-            sudo chmod 600 /home/vagrant/.ssh/id_rsa
-            sudo chmod 600 /home/vagrant/.ssh/id_rsa.pub
+            
+            cat /vagrant/keys/key | tr -d '\r' > ~/.ssh/id_rsa
+            cat /vagrant/keys/key.pub | tr -d '\r' > ~/.ssh/id_rsa.pub
+
+            #sudo chmod 600 ~/.ssh/id_rsa
+            #sudo chmod 600 ~/.ssh/id_rsa.pub
 
             sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
+            sed -i 's/#host_key_auto_add = True/host_key_auto_add = True/g' /etc/ansible/ansible.cfg
+            su vagrant
             cd /vagrant
             ansible-playbook -i hosts cluster.yml
         EOF

@@ -18,6 +18,11 @@ job "http-echo" {
         port     = "http"
         interval = "1s"
         timeout  = "1s"
+        check_restart {
+          limit = 3
+          grace = "30s"
+          ignore_warnings = false
+        }
       }
     }
     task "http-echo" {
