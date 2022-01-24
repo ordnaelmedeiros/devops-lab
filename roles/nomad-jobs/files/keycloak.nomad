@@ -10,7 +10,7 @@ job "keycloak" {
       }
     }
     service {
-      name = "keycloak"
+      name = "auth"
       port = "http"
       tags = [
         "traefik.enable=true",

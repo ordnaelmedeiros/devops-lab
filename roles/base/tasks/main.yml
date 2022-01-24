@@ -4,7 +4,7 @@
 
 - name: epel release
   become: true
-  yum:
+  dnf:
     name:
       - epel-release
 
@@ -15,11 +15,12 @@
 
 - name: libs
   become: true
-  yum:
+  dnf:
     update_cache: yes
     state: present
     name:
-      - yum-utils
+#      - yum-utils
+      - dnf-plugins-core
       - htop
       - curl
       - nano

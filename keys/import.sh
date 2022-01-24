@@ -1,1 +1,1 @@
-cat /vagrant/keys/key.pub >> /home/vagrant/.ssh/authorized_keys
+cat /home/vagrant/.ssh/ansible.pub >> /home/vagrant/.ssh/authorized_keys

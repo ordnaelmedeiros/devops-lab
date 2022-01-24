@@ -1,18 +1,19 @@
 - name: add hascicorp repo
   become: true
-  shell: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+  shell: sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
   when: "'consul' not in ansible_facts.packages"
 
 - name: install consul
-  vars:
-    consul_version: "1.10.3-1"
+#  vars:
+#    consul_version: "1.10.3-1"
   become: true
   when: "'consul' not in ansible_facts.packages or consul_version not in ansible_facts.packages['consul']|map(attribute='version')|list"
-  yum:
+  dnf:
     update_cache: yes
     state: present
     name:
-      - consul-{{consul_version}}
+#      - consul-{{consul_version}}
+      - consul
       - dnsmasq
 
 - name: consul hcl
@@ -21,6 +22,14 @@
   template:
     src: templates/{{consul_hcl}}.hcl.j2
     dest: /etc/consul.d/consul.hcl
+
+- name: consul env
+  notify: Restart consul
+  become: true
+  copy:
+    src: templates/consul.env
+    dest: /etc/consul.d/consul.env
+    attributes: +i
 
 - name: config dnsmasq 10-consul
   notify: Restart dnsmasq

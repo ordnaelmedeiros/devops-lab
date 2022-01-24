@@ -12,8 +12,18 @@
 
 ## Execute
 
+### Create custom box
+```shell
+cd custom-box
+./create.bat
+```
+
+### Up cluster
 ```shell
 vagrant up
+vagrant ssh ansible
+- cd /vagrant
+- ansible-playbook -i hosts cluster.yml
 ```
 
 ## Verify
