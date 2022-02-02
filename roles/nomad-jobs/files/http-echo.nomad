@@ -40,6 +40,19 @@ job "http-echo" {
         memory = 32
       }
     }  
+    scaling {
+      enabled = true
+      min     = 2
+      max     = 20
+      policy {
+        cooldown = "20s"
+        check "avg_instance_sessions" {
+          source = "prometheus"
+          query  = "(sum(traefik_service_requests_total{service=\"http-echo@consulcatalog\"}) - (sum(traefik_service_requests_total{service=\"http-echo@consulcatalog\"} offset 5m) or vector(0))) / 5"
+          strategy "pass-through" {}
+        }
+      }
+    }
   }
   update {
     max_parallel      = 1

@@ -1,7 +1,7 @@
 data_dir = "/opt/nomad/data"
 bind_addr = "0.0.0.0"
 region = "grim"
-datacenter = "db"
+datacenter = "metrics"
 
 server {
   enabled = false
@@ -15,6 +15,9 @@ client {
   }
   host_volume "nomad-data" {
     path = "/opt/nomad/data"
+  }
+  host_volume "grafana-data" {
+    path = "/opt/grafana/data"
   }
 }
 

@@ -61,9 +61,11 @@ job "countdash" {
               destination_name = "count-api"
               local_bind_port  = 8080
             }
+            config {
+              envoy_prometheus_bind_addr = "192.168.100.201:9090"
+            }
           }
           port = 9000
-          
         }
       }
     }

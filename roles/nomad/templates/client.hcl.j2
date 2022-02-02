@@ -16,6 +16,9 @@ client {
   host_volume "nomad-data" {
     path = "/opt/nomad/data"
   }
+  host_volume "grafana-data" {
+    path = "/opt/grafana/data"
+  }
 }
 
 advertise {
@@ -34,7 +37,9 @@ consul {
 }
 
 telemetry {
+  collection_interval = "1s"
+  disable_hostname = false
+  prometheus_metrics = true
   publish_allocation_metrics = true
-  publish_node_metrics       = true
-  prometheus_metrics         = true
+  publish_node_metrics = true
 }

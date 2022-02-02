@@ -4,6 +4,10 @@ client_addr = "0.0.0.0"
 
 ui_config {
   enabled = true
+  metrics_provider = "prometheus"
+  metrics_proxy {
+    base_url = "http://192.168.100.201:9090"
+  }
 }
 
 connect {
@@ -27,7 +31,7 @@ retry_join = [
 ]
 
 telemetry {
-  prometheus_retention_time = "30s"
+  prometheus_retention_time = "30m"
 }
 
 encrypt = "EUE+QhVArrb4JP08KQIO8OFsNvmEiFCJApuXl8c/7ZQ="

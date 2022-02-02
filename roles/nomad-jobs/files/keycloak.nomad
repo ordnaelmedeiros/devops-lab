@@ -8,6 +8,7 @@ job "keycloak" {
       port "http" {
         to = 8080
       }
+      port "expose" {}
     }
     service {
       name = "auth"
@@ -33,6 +34,14 @@ job "keycloak" {
             upstreams {
               destination_name = "keycloak-pg-pool"
               local_bind_port  = 5433
+            }
+            expose {
+              path {
+                path = "/metrics"
+                protocol = "http"
+                local_path_port = 8080
+                listener_port = "expose"
+              }
             }
           }
         }

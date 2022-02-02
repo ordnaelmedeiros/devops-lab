@@ -14,7 +14,7 @@
   prefix           = "traefik"
   exposedByDefault = false
   defaultRule = "Host(`{{"{{ .Name }}"}}.service.consul`) || PathPrefix(`/{{"{{ .Name }}"}}`)"
-  
+
   [providers.consulCatalog.endpoint]
     address = "{{ inventory_hostname }}:8500"
     scheme  = "http"

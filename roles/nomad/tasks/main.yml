@@ -21,3 +21,16 @@
   template:
     src: templates/{{nomad_hcl}}.hcl.j2
     dest: /etc/nomad.d/nomad.hcl
+
+- name: grafana dashboard
+  become: true
+  file:
+    path: /opt/grafana/data/dashboards
+    state: directory
+    mode: 0777
+
+- name: grafana dashboard
+  become: true
+  copy:
+    src: templates/grafana-dashboard.json
+    dest: /opt/grafana/data/dashboards/dashboard.json

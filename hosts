@@ -24,9 +24,11 @@ nomad_hcl = server
 [worker]
 192.168.100.171
 192.168.100.172
-#192.168.100.173
+192.168.100.173
 #192.168.100.174
 #192.168.100.175
+
+192.168.100.201 nomad_hcl=metrics
 
 [proxy]
 192.168.100.181
@@ -46,4 +48,3 @@ nomad_hcl = db-slave
 [db:children]
 db-master
 db-slave
-
