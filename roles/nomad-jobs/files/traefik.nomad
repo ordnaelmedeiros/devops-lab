@@ -1,17 +1,16 @@
 job "traefik" {
   region = "grim"
-  datacenters = ["app"]
-  type = "system"
+  datacenters = ["dc1"]
+  type = "service"
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "proxy"
+  }
   group "group" {
-    count = 1
     network {
       mode = "host"
-      port "http" {
-        static = 80
-      }
-      port "api" {
-        static = 8081
-      }
+      port "http" {static = 80}
+      port "api" {static = 8081}
     }
     service {
       name = "traefik"
@@ -22,15 +21,16 @@ job "traefik" {
         "traefik.http.middlewares.web-private.ipwhitelist.sourcerange=192.168.100.0/24, 10.221.0.0/24",
       ]
       check {
-        name     = "alive"
-        type     = "tcp"
-        port     = "api"
+        name = "alive"
+        type = "http"
+        port = "api"
+        path = "/ping"
         interval = "1s"
         timeout  = "2s"
-        check_restart {
-          limit = 3
-          grace = "30s"
-        }
+      }
+      check_restart {
+        limit = 3
+        grace = "30s"
       }
     }
     task "traefik" {
@@ -44,9 +44,8 @@ job "traefik" {
       }
       resources {
         cpu    = 100
-        memory = 64
+        memory = 256
       }
-
       template {
         destination = "local/traefik.toml"
         data = <<EOF
@@ -76,6 +75,7 @@ job "traefik" {
     buckets = [0.1,0.3,1.2,5.0]
 
 [accessLog]
+[ping]
 EOF
       }
     }

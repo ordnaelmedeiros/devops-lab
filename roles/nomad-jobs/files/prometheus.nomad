@@ -1,7 +1,10 @@
 job "prometheus" {
 
-  datacenters = ["metrics"]
-
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "metrics"
+  }
   group "prometheus" {
 
 
@@ -77,6 +80,21 @@ scrape_configs:
     static_configs:
     - targets: [{{ range service "nomad-server" }}'{{ .Address }}:4646',{{ end }}{{ range service "nomad-client" }}'{{ .Address }}:4646',{{ end }}]
 #    - targets: ['{{ env "attr.unique.network.ip-address" }}:4646']
+
+  - job_name: consul-connect-envoy
+    consul_sd_configs:
+    - server: 'http://192.168.100.151:8500'
+    relabel_configs:
+    - source_labels: [__meta_consul_service]
+      regex: (.+)-sidecar-proxy
+      action: drop
+    - source_labels: [__meta_consul_service_metadata_metrics_port_envoy]
+      regex: (.+)
+      action: keep
+    - source_labels: [__address__,__meta_consul_service_metadata_metrics_port_envoy]
+      regex: ([^:]+)(?::\d+)?;(\d+)
+      replacement: $1:$2
+      target_label: __address__
 
 EOH
         change_mode   = "signal"

@@ -1,7 +1,7 @@
 data_dir = "/opt/nomad/data"
 bind_addr = "0.0.0.0"
 region = "grim"
-datacenter = "app"
+datacenter = "dc1"
 
 server {
   enabled = true
@@ -29,7 +29,7 @@ consul {
 
 telemetry {
   collection_interval = "1s"
-  disable_hostname = false
+  disable_hostname = true
   prometheus_metrics = true
   publish_allocation_metrics = true
   publish_node_metrics = true

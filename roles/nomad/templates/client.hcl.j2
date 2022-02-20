@@ -1,7 +1,7 @@
 data_dir = "/opt/nomad/data"
 bind_addr = "0.0.0.0"
 region = "grim"
-datacenter = "app"
+datacenter = "{{ datacenter }}"
 
 server {
   enabled = false
@@ -16,8 +16,17 @@ client {
   host_volume "nomad-data" {
     path = "/opt/nomad/data"
   }
-  host_volume "grafana-data" {
-    path = "/opt/grafana/data"
+  # volumes in var host_volumes
+{% for v in host_volumes %}
+  host_volume "{{v.name}}" {
+    path = "{{v.path}}"
+  }
+{% endfor %}
+  meta {
+    # meta in var metas
+{% for m in metas %}
+    {{m.name}} = "{{m.value}}"
+{% endfor %}
   }
 }
 
@@ -38,7 +47,7 @@ consul {
 
 telemetry {
   collection_interval = "1s"
-  disable_hostname = false
+  disable_hostname = true
   prometheus_metrics = true
   publish_allocation_metrics = true
   publish_node_metrics = true

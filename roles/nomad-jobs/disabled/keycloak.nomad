@@ -1,7 +1,11 @@
 job "keycloak" {
-  datacenters = ["app"]
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "app"
+  }
   group "group" {
-    count = 1
+    count = 2
 
     network {
       mode = "bridge"
@@ -15,6 +19,8 @@ job "keycloak" {
       port = "http"
       tags = [
         "traefik.enable=true",
+        "traefik.http.services.auth.loadbalancer.sticky=true",
+        "traefik.http.services.auth.loadbalancer.sticky.cookie.name=auth-lb-sticky",
       ]
       check {
         name     = "alive"
@@ -62,6 +68,8 @@ job "keycloak" {
         DB_DATABASE = "keycloak"
         DB_USER = "postgres"
         DB_PASSWORD = "admin"
+        JGROUPS_DISCOVERY_PROTOCOL = "dns.DNS_PING"
+        JGROUPS_DISCOVERY_PROPERTIES = "dns_query=auth.service.consul"
       }
       resources {
         cpu = 100

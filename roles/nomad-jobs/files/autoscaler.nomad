@@ -1,8 +1,10 @@
 job "autoscaler" {
   type = "service"
-
-  datacenters = ["metrics"]
-
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "metrics"
+  }
   group "autoscaler" {
     count = 1
 

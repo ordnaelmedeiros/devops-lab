@@ -1,6 +1,9 @@
 job "loki" {
-  datacenters = ["metrics"]
-
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "metrics"
+  }
   group "loki" {
     count = 1
 

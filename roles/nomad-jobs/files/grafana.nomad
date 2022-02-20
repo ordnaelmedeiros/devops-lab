@@ -1,6 +1,9 @@
 job "grafana" {
-  datacenters = ["metrics"]
-
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "metrics"
+  }
   group "grafana" {
     count = 1
 

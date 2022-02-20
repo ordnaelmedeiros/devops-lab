@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-    (1..3).each do |i|
+    (1..4).each do |i|
         config.vm.define "worker-#{i}" do |m|
             m.vm.provider "virtualbox" do |vb|
                 vb.memory = 1024
@@ -37,22 +37,18 @@ Vagrant.configure("2") do |config|
             end
             m.vm.hostname = "worker-#{i}"
             m.vm.network "public_network", ip: "192.168.100.17#{i}"
-            if i==1 then
-                m.vm.network "forwarded_port", guest: 80, host: 80
-                m.vm.network "forwarded_port", guest: 8081, host: 8081
-            end
         end
     end
-#    config.vm.define "proxy" do |m|
-#        m.vm.hostname = "proxy"
-#        m.vm.network "public_network", ip: "192.168.100.181"
-#        m.vm.network "forwarded_port", guest: 80, host: 80
-#        m.vm.network "forwarded_port", guest: 8081, host: 8081
-#    end
+    config.vm.define "proxy" do |m|
+        m.vm.hostname = "proxy"
+        m.vm.network "public_network", ip: "192.168.100.181"
+        m.vm.network "forwarded_port", guest: 80, host: 80
+        m.vm.network "forwarded_port", guest: 8081, host: 8081
+    end
     (1..2).each do |i|
         config.vm.define "db-#{i}" do |m|
             m.vm.provider "virtualbox" do |vb|
-                vb.memory = 1024
+                vb.memory = 512
                 vb.cpus = 1
             end
             m.vm.hostname = "db-#{i}"

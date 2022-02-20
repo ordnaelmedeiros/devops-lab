@@ -1,7 +1,10 @@
 job "keycloak-pgpool" {
 
-  datacenters = ["app"]
-
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "app"
+  }
   group "pg-pool" {
 
     count = 1

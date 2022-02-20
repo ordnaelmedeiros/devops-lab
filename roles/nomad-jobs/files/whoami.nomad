@@ -1,5 +1,9 @@
 job "whoami" {
-  datacenters = ["app"]
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "app"
+  }
   group "group" {
     count = 1
     network {
@@ -22,20 +26,6 @@ job "whoami" {
         path     = "/"
         interval = "1s"
         timeout  = "1s"
-      }
-      connect {
-        #sidecar_service {}
-        gateway {
-          ingress {
-            listener {
-              port     = 8080
-              protocol = "tcp"
-              service {
-                name = "uuid-api"
-              }
-            }
-          }
-        }
       }
     }
     task "whoami" {

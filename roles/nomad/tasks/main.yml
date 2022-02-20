@@ -1,4 +1,3 @@
----
 - name: add hascicorp repo
   become: true
   shell: sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
@@ -7,7 +6,7 @@
 - name: install nomad
   become: true
 #  when: "'nomad' not in ansible_facts.packages or nomad_version not in ansible_facts.packages['nomad']|map(attribute='version')|list"
-  when: "'nomad' not in ansible_facts.packages"
+#  when: "'nomad' not in ansible_facts.packages"
   dnf:
     update_cache: yes
     state: present
@@ -22,15 +21,10 @@
     src: templates/{{nomad_hcl}}.hcl.j2
     dest: /etc/nomad.d/nomad.hcl
 
-- name: grafana dashboard
+- name: create volumes
   become: true
   file:
-    path: /opt/grafana/data/dashboards
+    path: "{{ item.path }}"
     state: directory
     mode: 0777
-
-- name: grafana dashboard
-  become: true
-  copy:
-    src: templates/grafana-dashboard.json
-    dest: /opt/grafana/data/dashboards/dashboard.json
+  with_items: "{{ host_volumes }}"

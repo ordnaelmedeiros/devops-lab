@@ -1,5 +1,9 @@
 job "http-echo" {
-  datacenters = ["app"]
+  datacenters = ["dc1"]
+  constraint  {
+    attribute = "${meta.server-type}"
+    value = "app"
+  }
   group "group" {
     count = 2
     network {

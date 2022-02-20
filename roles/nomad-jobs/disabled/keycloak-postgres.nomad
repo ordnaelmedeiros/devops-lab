@@ -1,9 +1,13 @@
 job "keycloak-postgres" {
 
-  datacenters = ["db"]
-
+  datacenters = ["dc1"]
+  
   group "pg-0" {
     count = 1
+    constraint  {
+      attribute = "${meta.server-type}"
+      value = "db-main"
+    }
     network {
       port "db" {
         static = 5433
@@ -26,11 +30,6 @@ job "keycloak-postgres" {
       }
     }
     task "pg-0" {
-      affinity {
-        attribute = "${meta.db-type}"
-        value = "master"
-        weight = 100
-      }
       driver = "docker"
       config {
         image = "bitnami/postgresql-repmgr:13.5.0"
@@ -80,10 +79,9 @@ ff02::2 ip6-allrouters
   
   group "pg-1" {
     count = 1
-    affinity {
-      attribute = "${meta.db-type}"
-      value = "slave"
-      weight = 100
+    constraint  {
+      attribute = "${meta.server-type}"
+      value = "db-replica"
     }
     network {
       port "db" {
