@@ -1,0 +1,35 @@
+- name: install consul
+  become: true
+  package:
+    state: present
+    name:
+      - consul
+      - dnsmasq
+
+- name: consul hcl
+  notify: Restart consul
+  become: true
+  template:
+    src: templates/{{consul_hcl}}.hcl.j2
+    dest: /etc/consul.d/consul.hcl
+
+- name: config dnsmasq 10-consul
+  notify: Restart dnsmasq
+  copy:
+    src: templates/10-consul
+    dest: /etc/dnsmasq.d/10-consul
+
+- name: change ifcfg-eth0
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^DNS1=', line: 'DNS1="127.0.0.1"' }
+    - { regexp: '^DNS2=', line: 'DNS2="{{ inventory_hostname }}"' }
+
+- name: update resolv.conf
+  template:
+    src: templates/resolv.conf
+    dest: /etc/resolv.conf
+  

@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.box_version = "20211026.0.0"
+  config.vm.provision "shell", inline: <<-EOF
+  
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    
+    sudo apt update
+    sudo apt install -y ansible sshpass nomad consul
+
+    sudo dd if=/dev/zero of=/EMPTY bs=1M
+    sudo rm -f /EMPTY
+    cat /dev/null > ~/.bash_history && history -c
+
+  EOF
+end
+  
+# sudo alternatives --set python /usr/bin/python3

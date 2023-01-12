@@ -1,0 +1,39 @@
+datacenter = "dc1"
+data_dir = "/opt/consul"
+client_addr = "0.0.0.0"
+
+ui_config {
+  enabled = true
+  metrics_provider = "prometheus"
+  metrics_proxy {
+    base_url = "http://192.168.100.201:9090"
+  }
+}
+
+connect {
+  enabled = true
+}
+
+ports {
+  grpc = 8502
+}
+
+recursors = ["8.8.8.8", "8.8.4.4"]
+
+server = true
+bind_addr = "0.0.0.0" # Listen on all IPv4
+advertise_addr = "{{ inventory_hostname }}"
+bootstrap_expect = {{ consul_server_cluster_length }}
+retry_join = [
+{% for item in groups['consul_server'] %}
+    "{{ hostvars[item]['inventory_hostname'] }}",
+{% endfor %}
+]
+
+telemetry {
+  prometheus_retention_time = "30m"
+}
+
+encrypt = "EUE+QhVArrb4JP08KQIO8OFsNvmEiFCJApuXl8c/7ZQ="
+encrypt_verify_outgoing = true
+encrypt_verify_incoming = true

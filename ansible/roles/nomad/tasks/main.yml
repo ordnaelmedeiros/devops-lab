@@ -1,0 +1,22 @@
+- name: install nomad
+  become: true
+  package:
+    update_cache: yes
+    state: present
+    name:
+      - nomad
+
+- name: nomad hcl
+  notify: Restart nomad
+  become: true
+  template:
+    src: templates/{{nomad_hcl}}.hcl.j2
+    dest: /etc/nomad.d/nomad.hcl
+
+- name: create volumes
+  become: true
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0777
+  with_items: "{{ host_volumes }}"
