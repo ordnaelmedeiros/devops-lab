@@ -1,4 +1,2 @@
 ---
-consul_version: "1.10.3-1"
-consul_server_cluster: "{{ query('inventory_hostnames', 'consul_server:!www') | replace(\"'\", '%') }}"
-consul_server_cluster_length: "{{ query('inventory_hostnames', 'consul_server:!www')|length }}"
+consul_server_cluster_length: "{{ query('inventory_hostnames', 'consul_server_'+datacenter+':!www')|length }}"

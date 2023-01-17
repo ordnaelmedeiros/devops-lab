@@ -1,0 +1,12 @@
+{
+    "name": "",
+    "template": {
+        "type": "name_prefix_match"
+    },
+    "service": {
+        "service": "${name.full}",
+        "failover": {
+            "NearestN": 2
+        } 
+    }
+}

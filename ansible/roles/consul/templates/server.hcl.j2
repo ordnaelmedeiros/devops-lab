@@ -1,4 +1,4 @@
-datacenter = "dc1"
+datacenter = "{{ datacenter }}"
 data_dir = "/opt/consul"
 client_addr = "0.0.0.0"
 
@@ -25,6 +25,11 @@ bind_addr = "0.0.0.0" # Listen on all IPv4
 advertise_addr = "{{ inventory_hostname }}"
 bootstrap_expect = {{ consul_server_cluster_length }}
 retry_join = [
+{% for item in groups['consul_server_'+datacenter] %}
+    "{{ hostvars[item]['inventory_hostname'] }}",
+{% endfor %}
+]
+retry_join_wan = [
 {% for item in groups['consul_server'] %}
     "{{ hostvars[item]['inventory_hostname'] }}",
 {% endfor %}

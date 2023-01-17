@@ -3,7 +3,7 @@
   package:
     state: present
     name:
-      - consul
+      - "{{consul_lib}}"
       - dnsmasq
 
 - name: consul hcl

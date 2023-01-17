@@ -1,6 +1,5 @@
 job "traefik" {
-  region = "grim"
-  datacenters = ["dc1"]
+  datacenters = ["dc1", "dc2"]
   type = "system"
 #  constraint  {
 #    attribute = "${meta.server-type}"

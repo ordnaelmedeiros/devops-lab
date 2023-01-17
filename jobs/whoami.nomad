@@ -1,11 +1,21 @@
 job "whoami" {
-  datacenters = ["dc1"]
+  datacenters = ["dc1", "dc2"]
   constraint  {
     attribute = "${meta.server-type}"
     value = "app"
   }
   group "group" {
-    count = 1
+    count = 10
+    spread {
+      attribute = "${node.datacenter}"
+      weight    = 100
+      target "dc1" {
+        percent = 90
+      }
+      target "dc2" {
+        percent = 10
+      }
+    }
     network {
       #mode = "bridge"
       port "http" {
@@ -41,7 +51,7 @@ job "whoami" {
     }  
   }
   update {
-    max_parallel      = 1
+    max_parallel      = 5
     health_check      = "task_states"
     min_healthy_time  = "10s"
     healthy_deadline  = "5m"

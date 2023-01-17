@@ -34,7 +34,7 @@ job consul-web {
 server {
   listen 80;
   location / {
-    proxy_pass http://192.168.56.101:8500;
+    proxy_pass http://consul.service.consul:8500;
   }
   access_log off;
   error_log  /var/log/nginx/error.log error;

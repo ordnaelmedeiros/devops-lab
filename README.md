@@ -23,7 +23,7 @@ cd custom-box
 vagrant up
 vagrant ssh ansible
 - cd /vagrant
-- ansible-playbook -i hosts cluster.yml
+- ansible-playbook -i hosts.yml cluster.yml
 ```
 
 ## Verify

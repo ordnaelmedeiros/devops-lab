@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "file", source: "keys/key.pub", destination: "/home/vagrant/.ssh/ansible.pub"
     config.vm.provision "shell", path: "keys/import.sh"
 
-    (1..3).each do |i|
+    (1..6).each do |i|
         config.vm.define "consul-#{i}" do |m|
             m.vm.hostname = "consul-#{i}"
             m.vm.network "private_network", ip: "192.168.56.10#{i}"
@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-    (1..3).each do |i|
+    (1..6).each do |i|
         config.vm.define "nomad-#{i}" do |m|
             m.vm.hostname = "nomad-#{i}"
             m.vm.network "private_network", ip: "192.168.56.11#{i}"
@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-    (1..3).each do |i|
+    (1..6).each do |i|
         config.vm.define "worker-#{i}" do |m|
             m.vm.provider "virtualbox" do |vb|
                 vb.memory = 1024

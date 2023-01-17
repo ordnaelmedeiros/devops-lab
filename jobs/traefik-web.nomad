@@ -1,8 +1,18 @@
 job traefik-web {
-  datacenters = ["dc1"]
+  datacenters = ["dc1", "dc2"]
   type = "service"
   group "grupo" {
-    count = 1
+    count = 2
+    spread {
+      attribute = "${node.datacenter}"
+      weight    = 100
+      target "dc1" {
+        percent = 50
+      }
+      target "dc2" {
+        percent = 50
+      }
+    }
     network {
       port "http" {
         to = 80
@@ -34,7 +44,7 @@ job traefik-web {
 server {
   listen 80;
   location / {
-    proxy_pass http://192.168.56.121:8081;
+    proxy_pass http://traefik.service.consul:8081;
   }
   access_log off;
   error_log  /var/log/nginx/error.log error;

@@ -8,7 +8,7 @@ sudo sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansi
 sudo sed -i 's/#host_key_auto_add = True/host_key_auto_add = True/g' /etc/ansible/ansible.cfg
 
 cd /vagrant/ansible
-ansible-playbook -i hosts cluster.yml
+ansible-playbook -i hosts.yml cluster.yml
 
-cd /vagrant/jobs
-./deploy.sh
+# cd /vagrant/jobs
+# ./deploy.sh

@@ -1,27 +1,52 @@
 ---
-- name: general
-  hosts: all
+- name: consul_server
+  hosts: consul_server
   become: true
   roles:
     - base
-
-- name: consul
-  hosts: consul_server, nomad_server, worker
-  become: true
-  roles:
     - consul
 
-- name: docker
+- name: nomad_server
+  hosts: nomad_server
+  become: true
+  roles:
+    - base
+    - consul
+    - nomad
+
+- name: worker
   hosts: worker
   become: true
   roles:
+    - base
     - docker
-
-- name: nomad
-  hosts: nomad_server, worker
-  become: true
-  roles:
+    - consul
     - nomad
+    - cni_plugins
+
+# - name: general
+#   hosts: all
+#   become: true
+#   roles:
+#     - base
+
+# - name: consul
+#   hosts: consul_server, nomad_server, worker
+#   become: true
+#   roles:
+#     - consul
+
+# - name: docker
+#   hosts: worker
+#   become: true
+#   roles:
+#     - docker
+
+# - name: nomad
+#   hosts: nomad_server, worker
+#   become: true
+#   roles:
+#     - nomad
 
 # - name: cni-plugins
 #   hosts: worker, db
