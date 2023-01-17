@@ -14,7 +14,10 @@
 
 ### Create custom box
 ```shell
-cd custom-box
+cd box/rockylinux
+./create.bat
+
+cd box/exec
 ./create.bat
 ```
 
@@ -27,7 +30,7 @@ vagrant ssh ansible
 ```
 
 ## Verify
-- Consul: http://localhost:8500
-- Nomad: http://localhost:4646
-- Traefik: http://localhost:8081
-- First app: http://localhost/http-echo
+- Consul: http://consul-web.localhost
+- Nomad: http://nomad-web.localhost
+- Traefik: http://traefik-web.localhost
+- First app: http://whoami.localhost
