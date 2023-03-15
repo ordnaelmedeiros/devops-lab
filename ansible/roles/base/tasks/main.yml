@@ -2,20 +2,21 @@
   package_facts:
     manager: auto
 
-- name: copy repos
-  become: true
-  copy:
-    src: files/{{ item }}.repo
-    dest: /etc/yum.repos.d/{{ item }}.repo
-  with_items:
-    - docker-ce
-    - hashicorp
+# - name: copy repos
+#   become: true
+#   copy:
+#     src: files/{{ item }}.repo
+#     dest: /etc/yum.repos.d/{{ item }}.repo
+#   with_items:
+#     - docker-ce
+#     - hashicorp
 
-- name: epel release
-  become: true
-  package:
-    name:
-      - epel-release
+# - name: epel release
+#   become: true
+#   package:
+#     name:
+#       - epel-release
+
 
 - name: libs
   become: true
@@ -23,12 +24,29 @@
     update_cache: yes
     state: present
     name:
-      - dnf-plugins-core
       - htop
       - curl
       - nano
-      - bind-utils
+      # - bind-utils
       - net-tools
+      - ca-certificates
+      - gnupg
+      - lsb-release
+
+- name: hashicorp repo
+  become: true
+  shell: |
+    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    apt update
+
+- name: docker repo
+  become: true
+  shell: |
+    sudo mkdir -m 0755 -p /etc/apt/keyrings
+    wget -O- https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/docker.gpg
+    echo  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt update
 
 - name: update vm.max_map_count
   sysctl:

@@ -5,12 +5,14 @@ Vagrant.configure("2") do |config|
         v.cpus = 1
     end
 
-    config.vm.box = "nomad-rockylinux"
+    config.vm.box = "ubuntu/jammy64"
+    config.vm.box_version = "20230314.0.0"
     config.vm.synced_folder '.', '/vagrant', disabled: true
     config.vm.provision "file", source: "keys/key.pub", destination: "/home/vagrant/.ssh/ansible.pub"
-    config.vm.provision "shell", path: "keys/import.sh"
+    config.vm.provision "file", source: "keys/key", destination: "/home/vagrant/.ssh/ansible.key"
+    config.vm.provision "shell", path: "scripts/authorized-keys.sh"
 
-    (1..6).each do |i|
+    (1..1).each do |i|
         config.vm.define "consul-#{i}" do |m|
             m.vm.hostname = "consul-#{i}"
             m.vm.network "private_network", ip: "192.168.56.10#{i}"
@@ -19,7 +21,7 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-    (1..6).each do |i|
+    (1..1).each do |i|
         config.vm.define "nomad-#{i}" do |m|
             m.vm.hostname = "nomad-#{i}"
             m.vm.network "private_network", ip: "192.168.56.11#{i}"
@@ -28,7 +30,7 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-    (1..6).each do |i|
+    (1..1).each do |i|
         config.vm.define "worker-#{i}" do |m|
             m.vm.provider "virtualbox" do |vb|
                 vb.memory = 1024
@@ -69,9 +71,12 @@ Vagrant.configure("2") do |config|
     # end
 
     config.vm.define "exec" do |m|
-        m.vm.box = "nomad-exec"
+        # m.vm.box = "nomad-exec"
         m.vm.synced_folder '.', '/vagrant', disabled: false
+        config.vm.provision "file", source: "files/ansible.cfg", destination: "/home/vagrant/ansible.cfg"
         m.vm.hostname = "ansible"
-        m.vm.provision "shell", privileged: false, path: "keys/exec-script.sh"
+        # m.vm.provision "shell", privileged: false, path: "keys/exec-script.sh"
+        m.vm.provision "shell", path: "scripts/private-key.sh"
+        m.vm.provision "shell", path: "scripts/install-ansible.sh"
     end
 end
