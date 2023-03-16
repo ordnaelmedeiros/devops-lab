@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-    (1..1).each do |i|
+    (1..2).each do |i|
         config.vm.define "worker-#{i}" do |m|
             m.vm.provider "virtualbox" do |vb|
                 vb.memory = 1024

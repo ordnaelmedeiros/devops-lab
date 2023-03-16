@@ -2,22 +2,6 @@
   package_facts:
     manager: auto
 
-# - name: copy repos
-#   become: true
-#   copy:
-#     src: files/{{ item }}.repo
-#     dest: /etc/yum.repos.d/{{ item }}.repo
-#   with_items:
-#     - docker-ce
-#     - hashicorp
-
-# - name: epel release
-#   become: true
-#   package:
-#     name:
-#       - epel-release
-
-
 - name: libs
   become: true
   package:
@@ -27,7 +11,7 @@
       - htop
       - curl
       - nano
-      # - bind-utils
+      - dnsutils
       - net-tools
       - ca-certificates
       - gnupg
