@@ -5,28 +5,16 @@
 - [VirtualBox](https://www.virtualbox.org/)
 - [Vagrant](https://www.vagrantup.com/)
 
-## Config
+## Install
 
-- Change public ip in Vagrantfile
-- Change ip in hosts
-
-## Execute
-
-### Create custom box
-```shell
-cd box/rockylinux
-./create.bat
-
-cd box/exec
-./create.bat
-```
-
-### Up cluster
+### Vagrant
 ```shell
 vagrant up
-vagrant ssh ansible
-- cd /vagrant
-- ansible-playbook -i hosts.yml cluster.yml
+```
+
+### Retry install
+```shell
+vagrant ssh exec -c /vagrant/scripts/run-ansible.sh
 ```
 
 ## Verify
