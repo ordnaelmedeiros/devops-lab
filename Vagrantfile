@@ -16,21 +16,15 @@ Vagrant.configure("2") do |config|
         config.vm.define "consul-#{i}" do |m|
             m.vm.hostname = "consul-#{i}"
             m.vm.network "private_network", ip: "192.168.56.10#{i}"
-            if i==1 then
-                m.vm.network "forwarded_port", guest: 8500, host: 8500
-            end
         end
     end
     (1..1).each do |i|
         config.vm.define "nomad-#{i}" do |m|
             m.vm.hostname = "nomad-#{i}"
             m.vm.network "private_network", ip: "192.168.56.11#{i}"
-            if i==1 then
-                m.vm.network "forwarded_port", guest: 4646, host: 4646
-            end
         end
     end
-    (1..2).each do |i|
+    (1..3).each do |i|
         config.vm.define "worker-#{i}" do |m|
             m.vm.provider "virtualbox" do |vb|
                 vb.memory = 1024
@@ -45,9 +39,8 @@ Vagrant.configure("2") do |config|
     end
     # config.vm.define "proxy" do |m|
     #     m.vm.hostname = "proxy"
-    #     m.vm.network "public_network", ip: "192.168.100.181"
+    #     m.vm.network "private_network", ip: "192.168.56.181"
     #     m.vm.network "forwarded_port", guest: 80, host: 80
-    #     m.vm.network "forwarded_port", guest: 8081, host: 8081
     # end
     # (1..2).each do |i|
     #     config.vm.define "db-#{i}" do |m|
@@ -75,8 +68,8 @@ Vagrant.configure("2") do |config|
         m.vm.synced_folder '.', '/vagrant', disabled: false
         config.vm.provision "file", source: "files/ansible.cfg", destination: "/home/vagrant/ansible.cfg"
         m.vm.hostname = "ansible"
-        # m.vm.provision "shell", privileged: false, path: "keys/exec-script.sh"
         m.vm.provision "shell", path: "scripts/private-key.sh"
         m.vm.provision "shell", path: "scripts/install-ansible.sh"
+        m.vm.provision "shell", privileged: false, path: "scripts/run-ansible.sh"
     end
 end
