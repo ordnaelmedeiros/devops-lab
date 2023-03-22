@@ -1,6 +1,6 @@
 {
   "insecure-registries":["registry.service.consul:5000"],
-  "dns": ["10.221.0.1"],
+  "dns": ["{{ docker_gateway_dns }}"],
   "default-address-pools": [
     {
       "base": "{{ docker_gateway_mask }}/16",

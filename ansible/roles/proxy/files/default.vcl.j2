@@ -1,0 +1,32 @@
+vcl 4.1;
+
+import directors;
+
+probe health_check {
+    .url = "/ping";
+    .timeout = 1s;
+    .interval = 1s;
+    .window = 5;
+    .threshold = 2;
+}
+
+{% for item in groups['worker'] %}
+backend web-{{ loop.index }} {
+    .host = "{{ hostvars[item]['inventory_hostname'] }}";
+    .port = "80";
+    .host_header = "traefik-web.localhost";
+    .probe = health_check;
+}
+{% endfor %}
+
+sub vcl_init {
+    new balancer = directors.round_robin();
+{% for item in groups['worker'] %}
+    balancer.add_backend(web-{{ loop.index }});
+{% endfor %}
+}
+
+sub vcl_recv {
+    set req.backend_hint = balancer.backend();
+    return(pass);
+}

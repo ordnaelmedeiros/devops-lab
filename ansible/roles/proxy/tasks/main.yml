@@ -1,0 +1,16 @@
+---
+- name: dir /opt/varnish
+  become: true
+  file:
+    path: "/opt/varnish"
+    state: directory
+
+- name: copy default.vcl
+  notify: Restart varnish
+  become: true
+  template:
+    src: files/{{ item }}.j2
+    dest: /opt/varnish/{{ item }}
+  with_items:
+    - default.vcl
+    - docker-compose.yml

@@ -23,3 +23,11 @@
     - consul
     - nomad
     - cni_plugins
+
+- name: proxy
+  hosts: proxy
+  become: true
+  roles:
+    - base
+    - docker
+    - proxy

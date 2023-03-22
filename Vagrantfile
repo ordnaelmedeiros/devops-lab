@@ -32,16 +32,13 @@ Vagrant.configure("2") do |config|
             end
             m.vm.hostname = "worker-#{i}"
             m.vm.network "private_network", ip: "192.168.56.12#{i}"
-            if i==1 then
-                m.vm.network "forwarded_port", guest: 80, host: 80
-            end
         end
     end
-    # config.vm.define "proxy" do |m|
-    #     m.vm.hostname = "proxy"
-    #     m.vm.network "private_network", ip: "192.168.56.181"
-    #     m.vm.network "forwarded_port", guest: 80, host: 80
-    # end
+    config.vm.define "proxy" do |m|
+        m.vm.hostname = "proxy"
+        m.vm.network "private_network", ip: "192.168.56.181"
+        m.vm.network "forwarded_port", guest: 80, host: 80
+    end
     # (1..2).each do |i|
     #     config.vm.define "db-#{i}" do |m|
     #         m.vm.provider "virtualbox" do |vb|
