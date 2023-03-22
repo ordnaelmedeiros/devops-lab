@@ -2,7 +2,7 @@
   package_facts:
     manager: auto
 
-- name: libs
+- name: install libs
   become: true
   package:
     update_cache: yes
@@ -16,6 +16,13 @@
       - ca-certificates
       - gnupg
       - lsb-release
+
+- name: remove libs
+  become: true
+  package:
+    state: absent
+    name:
+      - needrestart
 
 - name: check hashicorp.list exists
   stat: 

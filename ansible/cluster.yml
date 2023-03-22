@@ -31,3 +31,10 @@
     - base
     - docker
     - proxy
+
+- name: disable upgrade
+  tags: "disable-upgrade"
+  hosts: all
+  become: true
+  roles:
+    - disable-upgrade
