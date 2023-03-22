@@ -17,7 +17,18 @@
       - gnupg
       - lsb-release
 
+- name: check hashicorp.list exists
+  stat: 
+    path: /etc/apt/sources.list.d/hashicorp.list
+  register: hashicorp_list_rules
+
+- name: check docker.list exists
+  stat: 
+    path: /etc/apt/sources.list.d/docker.list
+  register: docker_list_rules
+
 - name: hashicorp repo
+  when: docker_list_rules.stat.exists == False
   become: true
   shell: |
     wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -25,6 +36,7 @@
     apt update
 
 - name: docker repo
+  when: hashicorp_list_rules.stat.exists == False
   become: true
   shell: |
     sudo mkdir -m 0755 -p /etc/apt/keyrings
