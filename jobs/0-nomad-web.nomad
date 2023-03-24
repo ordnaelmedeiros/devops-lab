@@ -14,6 +14,7 @@ job nomad-web {
       }
     }
     network {
+      mode = "bridge"
       port "http" {
         to = 80
       }
@@ -24,6 +25,15 @@ job nomad-web {
       tags = [
         "traefik.enable=true"
       ]
+      connect {
+        sidecar_service {
+          tags = [
+            "traefik.enable=false",
+          ]
+          proxy {
+          }
+        }
+      }
     }
     task "task" {
       driver = "docker"

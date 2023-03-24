@@ -5,7 +5,7 @@ job "whoami" {
     value = "app"
   }
   group "group" {
-    count = 10
+    count = 4
     spread {
       attribute = "${node.datacenter}"
       weight    = 100
@@ -17,7 +17,7 @@ job "whoami" {
       }
     }
     network {
-      #mode = "bridge"
+      mode = "bridge"
       port "http" {
         to = 80
       }
@@ -51,7 +51,7 @@ job "whoami" {
     }  
   }
   update {
-    max_parallel      = 5
+    max_parallel      = 1
     health_check      = "task_states"
     min_healthy_time  = "10s"
     healthy_deadline  = "5m"

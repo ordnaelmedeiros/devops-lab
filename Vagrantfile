@@ -1,7 +1,13 @@
+require 'yaml'
+
+current_dir = File.dirname(File.expand_path(__FILE__))
+configs = YAML.load_file("#{current_dir}/ansible/hosts.yml")
+all_child = configs['all']['children']
+
 Vagrant.configure("2") do |config|
 
     config.vm.provider "virtualbox" do |v|
-        v.memory = 512
+        v.memory = 1024
         v.cpus = 1
     end
 
@@ -12,56 +18,34 @@ Vagrant.configure("2") do |config|
     config.vm.provision "file", source: "keys/key", destination: "/home/vagrant/.ssh/ansible.key"
     config.vm.provision "shell", path: "scripts/authorized-keys.sh"
 
-    (1..3).each do |i|
-        config.vm.define "consul-#{i}" do |m|
-            m.vm.hostname = "consul-#{i}"
-            m.vm.network "private_network", ip: "192.168.56.10#{i}"
-        end
-    end
-    (1..3).each do |i|
-        config.vm.define "nomad-#{i}" do |m|
-            m.vm.hostname = "nomad-#{i}"
-            m.vm.network "private_network", ip: "192.168.56.11#{i}"
-        end
-    end
-    (1..3).each do |i|
-        config.vm.define "worker-#{i}" do |m|
-            m.vm.provider "virtualbox" do |vb|
-                vb.memory = 1024
-                vb.cpus = 1
+    all_child.each do |grupo|
+        if grupo[1]['hosts'] == nil then
+            all_child[grupo[0]]['children'].each do |server|
+                hostname = server[1]['vars']['hostname']
+                datacenter = server[1]['vars']['datacenter']
+                server[1]['hosts'].each_with_index  do |host,i|
+                    config.vm.define "#{hostname}-#{datacenter}-#{i}" do |m|
+                        m.vm.hostname = "#{hostname}-#{datacenter}-#{i}"
+                        m.vm.network "private_network", ip: "#{host[0]}"
+                    end
+                end
             end
-            m.vm.hostname = "worker-#{i}"
-            m.vm.network "private_network", ip: "192.168.56.12#{i}"
+        else
+            grupo[1]['hosts'].each_with_index  do |host,i|
+                hostname = grupo[0]
+                config.vm.define "#{hostname}-#{i}" do |m|
+                    m.vm.hostname = "#{hostname}-#{i}"
+                    m.vm.network "private_network", ip: "#{host[0]}"
+                end
+            end
         end
     end
-    config.vm.define "proxy" do |m|
-        m.vm.hostname = "proxy"
-        m.vm.network "private_network", ip: "192.168.56.181"
+
+    config.vm.define "proxy-0" do |m|
         m.vm.network "forwarded_port", guest: 80, host: 80
     end
-    # (1..2).each do |i|
-    #     config.vm.define "db-#{i}" do |m|
-    #         m.vm.provider "virtualbox" do |vb|
-    #             vb.memory = 512
-    #             vb.cpus = 1
-    #         end
-    #         m.vm.hostname = "db-#{i}"
-    #         m.vm.network "public_network", ip: "192.168.100.19#{i}"
-    #     end
-    # end
-    # (1..1).each do |i|
-    #     config.vm.define "metrics-#{i}" do |m|
-    #         m.vm.provider "virtualbox" do |vb|
-    #             vb.memory = 1024
-    #             vb.cpus = 1
-    #         end
-    #         m.vm.hostname = "metrics-#{i}"
-    #         m.vm.network "public_network", ip: "192.168.100.20#{i}"
-    #     end
-    # end
 
     config.vm.define "exec" do |m|
-        # m.vm.box = "nomad-exec"
         m.vm.synced_folder '.', '/vagrant', disabled: false
         config.vm.provision "file", source: "files/ansible.cfg", destination: "/home/vagrant/ansible.cfg"
         m.vm.hostname = "ansible"

@@ -4,6 +4,7 @@ job consul-web {
   group "grupo" {
     count = 1
     network {
+      mode = "bridge"
       port "http" {
         to = 80
       }
