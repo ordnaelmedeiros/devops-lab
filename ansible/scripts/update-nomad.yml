@@ -1,0 +1,39 @@
+- name: update nomad
+  become: true
+  serial: 1
+  hosts: nomad_server,worker
+  tasks:
+
+  - name: drain
+    when: "'worker' in group_names"
+    shell: |
+      nomad node drain -yes -self -enable -keep-ineligible
+
+  - name: able upgrade
+    ansible.builtin.dpkg_selections:
+      name: nomad
+      selection: install
+
+  - name: install nomad
+    become: true
+    package:
+      state: present
+      name:
+        - "{{nomad_lib}}"
+
+  - name: Restart nomad
+    systemd:
+      name: nomad
+      state: restarted
+      daemon_reload: yes
+      enabled: yes
+
+  - name: eligibility enable
+    when: "'worker' in group_names"
+    shell: |
+      nomad node eligibility -self -enable
+
+  - name: disable upgrade
+    ansible.builtin.dpkg_selections:
+      name: nomad
+      selection: hold

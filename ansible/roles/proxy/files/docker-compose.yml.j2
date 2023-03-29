@@ -3,12 +3,13 @@ services:
   varnish:
     image: varnish:7.2.1
     container_name: varnish
+    command: "-p default_keep=300"
+    network_mode: "host"
     volumes:
       - "/opt/varnish/default.vcl:/etc/varnish/default.vcl"
-    ports:
-      - "80:80"
-    # tmpfs:
-    #   - /var/lib/varnish:exec
     environment:
       - VARNISH_SIZE=2G  
-    command: "-p default_keep=300"
+    # ports:
+    #   - "80:80"
+    # tmpfs:
+    #   - /var/lib/varnish:exec

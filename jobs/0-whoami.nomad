@@ -27,7 +27,7 @@ job "whoami" {
       port = "http"
       tags = [
         "traefik.enable=true",
-        # "traefik.http.routers.whoami.rule=Path(`/whoami`) || Host(`whoami.service.consul`)",
+        "traefik.http.routers.whoami.rule=Host(`whoami.service.consul`, `whoami.localhost`) || Path(`/whoami`)",
       ]
       check {
         name     = "alive"

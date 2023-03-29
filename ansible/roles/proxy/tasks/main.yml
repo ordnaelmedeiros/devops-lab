@@ -14,3 +14,11 @@
   with_items:
     - default.vcl
     - docker-compose.yml
+
+- name: update bridge-nf-call-iptable
+  sysctl:
+    name: net.ipv4.ip_unprivileged_port_start
+    value: "79"
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.conf

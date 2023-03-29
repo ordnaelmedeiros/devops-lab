@@ -28,5 +28,11 @@ sub vcl_init {
 
 sub vcl_recv {
     set req.backend_hint = balancer.backend();
+    set req.http.X-Client-Ip = client.ip;
+    if (req.http.X-Forwarded-For) {
+        set req.http.X-Forwarded-For = req.http.X-Forwarded-For + ", " + client.ip;
+    } else {
+        set req.http.X-Forwarded-For = client.ip;
+    }
     return(pass);
 }
